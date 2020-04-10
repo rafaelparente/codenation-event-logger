@@ -1,7 +1,9 @@
 package com.rafaelparente.eventlogger.models;
 
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -17,15 +19,20 @@ public class Event {
 
     @OneToOne(mappedBy = "event", cascade = CascadeType.ALL)
     @NotNull
-    private Log log;
+    @Setter(AccessLevel.NONE) private Log log;
 
     @NotNull
     private EventLevel level;
 
-    public Event(EventLevel level, Log log) {
-        this.level = level;
+    public void setLog(Log log) {
+        if (log == null) {
+            if (this.log != null) {
+                this.log.setEvent(null);
+            }
+        } else {
+            log.setEvent(this);
+        }
         this.log = log;
-        this.log.setEvent(this);
     }
 
 }

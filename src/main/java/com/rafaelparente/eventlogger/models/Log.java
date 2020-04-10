@@ -1,6 +1,7 @@
 package com.rafaelparente.eventlogger.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -19,6 +20,7 @@ public class Log {
     @Id
     private Long id;
 
+    @JsonIgnore
     @OneToOne(cascade = CascadeType.ALL)
     @MapsId
     private Event event;
@@ -30,9 +32,5 @@ public class Log {
     @NotNull
     @CreatedDate
     private LocalDateTime createdAt;
-
-    public Log(String description) {
-        this.description = description;
-    }
 
 }
