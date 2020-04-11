@@ -1,5 +1,6 @@
 package com.rafaelparente.eventlogger.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,6 +8,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Data
 @NoArgsConstructor
@@ -23,6 +26,19 @@ public class Event {
 
     @NotNull
     private EventLevel level;
+
+    @NotNull
+    private String description;
+
+    @NotNull
+    private String source;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @NotNull
+    private LocalDateTime date = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+
+    @NotNull
+    private Integer quantity = 1;
 
     public void setLog(Log log) {
         if (log == null) {
