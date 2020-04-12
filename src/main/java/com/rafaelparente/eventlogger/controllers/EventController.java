@@ -14,8 +14,8 @@ public class EventController {
     private EventService eventService;
 
     @GetMapping
-    public Iterable<?> findAll(Pageable pageable) {
-        return this.eventService.findAll(pageable);
+    public Iterable<?> findMultiple(Pageable pageable) {
+        return this.eventService.findMultiple(pageable);
     }
 
     @PostMapping

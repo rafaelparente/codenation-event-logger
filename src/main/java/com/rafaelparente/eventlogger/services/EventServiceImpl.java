@@ -15,8 +15,8 @@ public class EventServiceImpl implements EventService {
     private EventRepository eventRepository;
 
     @Override
-    public List<?> findAll(Pageable pageable) {
-        return eventRepository.findAll(pageable).getContent();
+    public List<?> findMultiple(Pageable pageable) {
+        return this.eventRepository.findMultiple(pageable).getContent();
     }
 
     @Override

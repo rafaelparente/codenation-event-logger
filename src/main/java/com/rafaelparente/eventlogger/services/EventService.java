@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface EventService {
 
-    List<?> findAll(Pageable pageable);
+    List<?> findMultiple(Pageable pageable);
 
     Event save(Event event);
 
