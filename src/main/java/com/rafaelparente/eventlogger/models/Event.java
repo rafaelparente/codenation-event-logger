@@ -20,15 +20,15 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @OneToOne(mappedBy = "event", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @NotNull
-    @Setter(AccessLevel.NONE) private Log log;
-
     @NotNull
     private EventLevel level;
 
     @NotNull
     private String description;
+
+    @OneToOne(mappedBy = "event", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @NotNull
+    @Setter(AccessLevel.NONE) private Log log;
 
     @NotNull
     private String source;

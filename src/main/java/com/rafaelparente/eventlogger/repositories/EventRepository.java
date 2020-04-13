@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EventRepository extends PagingAndSortingRepository<Event, Long> {
 
-    @Query("SELECT e.date, e.description, e.level, e.quantity, e.source FROM Event e")
-    public Page<?> findMultiple(Pageable pageable);
+    @Query("SELECT e.level, e.date, e.description, e.source, e.quantity FROM Event e")
+    Page<?> findMultiple(Pageable pageable);
 
 }
