@@ -1,12 +1,15 @@
 package com.rafaelparente.eventlogger.services;
 
 import com.rafaelparente.eventlogger.models.Event;
+import com.rafaelparente.eventlogger.models.EventLevel;
 import com.rafaelparente.eventlogger.repositories.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EventServiceImpl implements EventService {
@@ -15,8 +18,13 @@ public class EventServiceImpl implements EventService {
     private EventRepository eventRepository;
 
     @Override
-    public List<?> findMultiple(Pageable pageable) {
-        return this.eventRepository.findMultiple(pageable).getContent();
+    public List<?> findMultiple(Pageable pageable,
+                                Optional<EventLevel> level,
+                                Optional<String> description,
+                                Optional<String> source,
+                                Optional<LocalDate> date,
+                                Optional<Integer> quantity) {
+        return this.eventRepository.findMultiple(pageable, level, description, source, date, quantity).getContent();
     }
 
     @Override

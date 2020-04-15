@@ -8,8 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -33,9 +32,9 @@ public class Event {
     @NotNull
     private String source;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @NotNull
-    private LocalDateTime date = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+    private LocalDate date = LocalDate.now();
 
     @NotNull
     private Integer quantity = 1;
