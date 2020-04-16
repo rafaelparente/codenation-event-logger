@@ -26,7 +26,11 @@ public class EventController {
                                 @RequestParam Optional<String> source,
                                 @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<LocalDate> date,
                                 @RequestParam Optional<Integer> quantity) {
-        return this.eventService.findMultiple(pageable, level, description, source, date, quantity);
+        return this.eventService.findMultiple(pageable, level,
+                description.map((s) -> s.replace('~', '%')),
+                source.map((s) -> s.replace('~', '%')),
+                date,
+                quantity);
     }
 
     @PostMapping

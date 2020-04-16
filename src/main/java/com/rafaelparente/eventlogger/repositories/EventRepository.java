@@ -18,8 +18,8 @@ public interface EventRepository extends PagingAndSortingRepository<Event, Long>
 
     @Query("SELECT new com.rafaelparente.eventlogger.dto.EventDTO(e.level, e.description, e.source, e.date, e.quantity) FROM Event e " +
             "WHERE (:level is null or e.level = :level) and " +
-            "(:description is null or e.description = :description) and " +
-            "(:source is null  or e.source = :source) and " +
+            "(:description is null or e.description LIKE :description) and " +
+            "(:source is null  or e.source LIKE :source) and " +
             "(:date is null or e.date = :date) and " +
             "(:quantity is null or e.quantity = :quantity)")
     Page<EventDTO> findMultiple(Pageable pageable,
