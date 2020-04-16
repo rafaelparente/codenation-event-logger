@@ -10,7 +10,6 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
 import java.util.Optional;
 
 @Repository
@@ -20,13 +19,17 @@ public interface EventRepository extends PagingAndSortingRepository<Event, Long>
             "WHERE (:level is null or e.level = :level) and " +
             "(:description is null or e.description LIKE :description) and " +
             "(:source is null  or e.source LIKE :source) and " +
-            "(:date is null or e.date = :date) and " +
+            "(:year is null or year(e.date) = :year) and " +
+            "(:month is null or month(e.date) = :month) and " +
+            "(:day is null or day(e.date) = :day) and " +
             "(:quantity is null or e.quantity = :quantity)")
     Page<EventDTO> findMultiple(Pageable pageable,
                                 @Param("level") Optional<EventLevel> level,
                                 @Param("description") Optional<String> description,
                                 @Param("source") Optional<String> source,
-                                @Param("date") Optional<LocalDate> date,
+                                @Param("year") Optional<Integer> year,
+                                @Param("month") Optional<Integer> month,
+                                @Param("day") Optional<Integer> day,
                                 @Param("quantity") Optional<Integer> quantity);
 
 }

@@ -25,11 +25,16 @@ public class EventController {
                                 @RequestParam Optional<String> description,
                                 @RequestParam Optional<String> source,
                                 @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<LocalDate> date,
+                                @RequestParam Optional<Integer> year,
+                                @RequestParam Optional<Integer> month,
+                                @RequestParam Optional<Integer> day,
                                 @RequestParam Optional<Integer> quantity) {
         return this.eventService.findMultiple(pageable, level,
                 description.map((s) -> s.replace('~', '%')),
                 source.map((s) -> s.replace('~', '%')),
-                date,
+                date.map((d) -> Optional.of(d.getYear())).orElse(year),
+                date.map((d) -> Optional.of(d.getMonthValue())).orElse(month),
+                date.map((d) -> Optional.of(d.getDayOfMonth())).orElse(day),
                 quantity);
     }
 

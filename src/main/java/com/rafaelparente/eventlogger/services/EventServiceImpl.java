@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,9 +21,11 @@ public class EventServiceImpl implements EventService {
                                 Optional<EventLevel> level,
                                 Optional<String> description,
                                 Optional<String> source,
-                                Optional<LocalDate> date,
+                                Optional<Integer> year,
+                                Optional<Integer> month,
+                                Optional<Integer> day,
                                 Optional<Integer> quantity) {
-        return this.eventRepository.findMultiple(pageable, level, description, source, date, quantity).getContent();
+        return this.eventRepository.findMultiple(pageable, level, description, source, year, month, day, quantity).getContent();
     }
 
     @Override
