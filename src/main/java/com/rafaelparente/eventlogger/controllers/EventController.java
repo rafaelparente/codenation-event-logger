@@ -9,6 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,21 +22,26 @@ public class EventController {
 
     @GetMapping
     public List<?> findMultiple(Pageable pageable,
-                                @RequestParam Optional<EventLevel> level,
+                                @RequestParam Optional<List<EventLevel>> level,
                                 @RequestParam Optional<String> description,
-                                @RequestParam Optional<String> source,
+                                @RequestParam Optional<List<String>> source,
                                 @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<LocalDate> date,
-                                @RequestParam Optional<Integer> year,
-                                @RequestParam Optional<Integer> month,
-                                @RequestParam Optional<Integer> day,
-                                @RequestParam Optional<Integer> quantity) {
+                                @RequestParam Optional<List<Integer>> year,
+                                @RequestParam Optional<List<Integer>> month,
+                                @RequestParam Optional<List<Integer>> day,
+                                @RequestParam Optional<List<Integer>> quantity) {
         return this.eventService.findMultiple(pageable, level,
-                description.map((s) -> s.replace('~', '%')),
-                source.map((s) -> s.replace('~', '%')),
-                date.map((d) -> Optional.of(d.getYear())).orElse(year),
-                date.map((d) -> Optional.of(d.getMonthValue())).orElse(month),
-                date.map((d) -> Optional.of(d.getDayOfMonth())).orElse(day),
+                description.map(s -> s.isEmpty() ? null : s.replace('~', '%')),
+                source,
+                date.map((d) -> Optional.of(Collections.singletonList(d.getYear()))).orElse(year),
+                date.map((d) -> Optional.of(Collections.singletonList(d.getMonthValue()))).orElse(month),
+                date.map((d) -> Optional.of(Collections.singletonList(d.getDayOfMonth()))).orElse(day),
                 quantity);
+    }
+
+    @GetMapping("/{id}")
+    public Optional<Event> findById(@PathVariable Long id) {
+        return this.eventService.findById(id);
     }
 
     @PostMapping

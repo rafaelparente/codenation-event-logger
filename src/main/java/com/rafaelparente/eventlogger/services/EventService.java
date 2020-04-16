@@ -10,13 +10,15 @@ import java.util.Optional;
 public interface EventService {
 
     List<?> findMultiple(Pageable pageable,
-                         Optional<EventLevel> level,
+                         Optional<List<EventLevel>> level,
                          Optional<String> description,
-                         Optional<String> source,
-                         Optional<Integer> year,
-                         Optional<Integer> month,
-                         Optional<Integer> day,
-                         Optional<Integer> quantity);
+                         Optional<List<String>> source,
+                         Optional<List<Integer>> year,
+                         Optional<List<Integer>> month,
+                         Optional<List<Integer>> day,
+                         Optional<List<Integer>> quantity);
+
+    Optional<Event> findById(Long id);
 
     Event save(Event event);
 
