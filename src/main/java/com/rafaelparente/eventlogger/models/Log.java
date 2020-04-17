@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 
 @Data
 @NoArgsConstructor
@@ -28,6 +27,6 @@ public class Log {
 
     @JsonFormat(pattern = "HH:mm")
     @NotNull
-    private LocalTime time = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
+    private LocalTime time;
 
 }

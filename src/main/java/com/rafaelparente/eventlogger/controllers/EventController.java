@@ -21,7 +21,7 @@ public class EventController {
     private EventService eventService;
 
     @GetMapping
-    public List<?> findMultiple(Pageable pageable,
+    public List<?> findMultipleEvents(Pageable pageable,
                                 @RequestParam Optional<List<EventLevel>> level,
                                 @RequestParam Optional<String> description,
                                 @RequestParam Optional<List<String>> source,
@@ -33,20 +33,38 @@ public class EventController {
         return this.eventService.findMultiple(pageable, level,
                 description.map(s -> s.isEmpty() ? null : s.replace('~', '%')),
                 source,
-                date.map((d) -> Optional.of(Collections.singletonList(d.getYear()))).orElse(year),
-                date.map((d) -> Optional.of(Collections.singletonList(d.getMonthValue()))).orElse(month),
-                date.map((d) -> Optional.of(Collections.singletonList(d.getDayOfMonth()))).orElse(day),
+                date.map((d) -> Optional.of(Collections.singletonList(d.getYear())))
+                        .orElse(year),
+                date.map((d) -> Optional.of(Collections.singletonList(d.getMonthValue())))
+                        .orElse(month),
+                date.map((d) -> Optional.of(Collections.singletonList(d.getDayOfMonth())))
+                        .orElse(day),
                 quantity);
     }
 
     @GetMapping("/{id}")
-    public Optional<Event> findById(@PathVariable Long id) {
+    public Optional<Event> findEventById(@PathVariable Long id) {
         return this.eventService.findById(id);
     }
 
     @PostMapping
-    public Event save(@RequestBody Event event) {
+    public Event saveEvent(@RequestBody Event event) {
         return this.eventService.save(event);
+    }
+
+    @PutMapping("/{id}")
+    public Event changeEvent(@RequestBody Event event, @PathVariable Long id) {
+        return this.eventService.change(event, id);
+    }
+
+    @PatchMapping("/{id}")
+    public Optional<Event> updateEvent(@RequestBody Event event, @PathVariable Long id) {
+        return this.eventService.update(event, id);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteEvent(@PathVariable Long id) {
+        this.eventService.delete(id);
     }
 
 }

@@ -22,4 +22,10 @@ public interface EventService {
 
     Event save(Event event);
 
+    Event change(Event event, Long id);
+
+    Optional<Event> update(Event event, Long id);
+
+    void delete(Long id);
+
 }

@@ -34,10 +34,10 @@ public class Event {
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     @NotNull
-    private LocalDate date = LocalDate.now();
+    private LocalDate date;
 
     @NotNull
-    private Integer quantity = 1;
+    private Integer quantity;
 
     public void setLog(Log log) {
         if (log == null) {
