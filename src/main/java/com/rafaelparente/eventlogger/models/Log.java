@@ -1,13 +1,11 @@
 package com.rafaelparente.eventlogger.models;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.time.LocalTime;
 
 @Data
 @NoArgsConstructor
@@ -15,6 +13,7 @@ import java.time.LocalTime;
 public class Log {
 
     @Id
+    @JsonIgnore
     private Long id;
 
     @JsonIgnore
@@ -24,9 +23,5 @@ public class Log {
 
     @NotNull
     private String text;
-
-    @JsonFormat(pattern = "HH:mm")
-    @NotNull
-    private LocalTime time;
 
 }

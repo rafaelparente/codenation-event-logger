@@ -16,7 +16,7 @@ import java.util.Optional;
 @Repository
 public interface EventRepository extends PagingAndSortingRepository<Event, Long> {
 
-    @Query("SELECT new com.rafaelparente.eventlogger.dto.EventDTO(e.level, e.description, e.source, e.date, e.quantity) FROM Event e " +
+    @Query("SELECT new com.rafaelparente.eventlogger.dto.EventDTO(e.id, e.level, e.description, e.source, e.date, e.quantity) FROM Event e " +
             "WHERE (COALESCE(:level) is null or e.level in :level) " +
             "and (:description is null or e.description like :description) " +
             "and (COALESCE(:source) is null or e.source in :source) " +

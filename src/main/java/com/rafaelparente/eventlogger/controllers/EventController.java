@@ -1,17 +1,24 @@
 package com.rafaelparente.eventlogger.controllers;
 
+import com.rafaelparente.eventlogger.assemblers.EventDTOModelAssembler;
+import com.rafaelparente.eventlogger.assemblers.EventModelAssembler;
+import com.rafaelparente.eventlogger.exceptions.EventNotFoundException;
 import com.rafaelparente.eventlogger.models.Event;
 import com.rafaelparente.eventlogger.models.EventLevel;
 import com.rafaelparente.eventlogger.services.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 
 @RestController
 @RequestMapping("/events")
@@ -20,51 +27,83 @@ public class EventController {
     @Autowired
     private EventService eventService;
 
+    @Autowired
+    private EventModelAssembler eventModelAssembler;
+
+    @Autowired
+    private EventDTOModelAssembler eventDTOModelAssembler;
+
     @GetMapping
-    public List<?> findMultipleEvents(Pageable pageable,
-                                @RequestParam Optional<List<EventLevel>> level,
-                                @RequestParam Optional<String> description,
-                                @RequestParam Optional<List<String>> source,
-                                @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<LocalDate> date,
-                                @RequestParam Optional<List<Integer>> year,
-                                @RequestParam Optional<List<Integer>> month,
-                                @RequestParam Optional<List<Integer>> day,
-                                @RequestParam Optional<List<Integer>> quantity) {
-        return this.eventService.findMultiple(pageable, level,
+    public CollectionModel<EntityModel<?>> findMultipleEvents(Pageable pageable,
+                                                              @RequestParam Optional<List<EventLevel>> level,
+                                                              @RequestParam Optional<String> description,
+                                                              @RequestParam Optional<List<String>> source,
+                                                              @RequestParam Optional<List<Integer>> year,
+                                                              @RequestParam Optional<List<Integer>> month,
+                                                              @RequestParam Optional<List<Integer>> day,
+                                                              @RequestParam Optional<List<Integer>> quantity) {
+        List<EntityModel<?>> events = this.eventService.findMultiple(pageable, level,
                 description.map(s -> s.isEmpty() ? null : s.replace('~', '%')),
-                source,
-                date.map((d) -> Optional.of(Collections.singletonList(d.getYear())))
-                        .orElse(year),
-                date.map((d) -> Optional.of(Collections.singletonList(d.getMonthValue())))
-                        .orElse(month),
-                date.map((d) -> Optional.of(Collections.singletonList(d.getDayOfMonth())))
-                        .orElse(day),
-                quantity);
+                source, year, month, day, quantity)
+                .stream().map(eventDTOModelAssembler::toModel).collect(Collectors.toList());
+
+        return new CollectionModel<>(events); //linkTo(methodOn(EventController.class).all()).withSelfRel()
     }
 
     @GetMapping("/{id}")
-    public Optional<Event> findEventById(@PathVariable Long id) {
-        return this.eventService.findById(id);
+    public ResponseEntity<?> findEventById(@PathVariable Long id) {
+        Event event = this.eventService.findById(id)
+                .orElseThrow(() -> new EventNotFoundException(id));
+        EntityModel<?> entityModel = eventModelAssembler.toModel(event);
+
+        return ResponseEntity
+                .ok()
+                .location(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(entityModel);
     }
 
     @PostMapping
-    public Event saveEvent(@RequestBody Event event) {
-        return this.eventService.save(event);
+    public ResponseEntity<?> saveEvent(@RequestBody Event event) {
+        Event savedEvent = this.eventService.save(event);
+        EntityModel<?> entityModel = eventModelAssembler.toModel(savedEvent);
+
+        return ResponseEntity
+                .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(entityModel);
     }
 
     @PutMapping("/{id}")
-    public Event changeEvent(@RequestBody Event event, @PathVariable Long id) {
-        return this.eventService.change(event, id);
+    public ResponseEntity<?> changeEvent(@RequestBody Event event, @PathVariable Long id) {
+        Optional<Event> changedEvent = this.eventService.change(event, id);
+
+        if (changedEvent.isPresent()) {
+            EntityModel<?> entityModel = eventModelAssembler.toModel(changedEvent.get());
+
+            return ResponseEntity
+                    .ok()
+                    .location(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                    .body(entityModel);
+        }
+
+        return this.saveEvent(event);
     }
 
     @PatchMapping("/{id}")
-    public Optional<Event> updateEvent(@RequestBody Event event, @PathVariable Long id) {
-        return this.eventService.update(event, id);
+    public ResponseEntity<?> updateEvent(@RequestBody Event event, @PathVariable Long id) {
+        Event updatedEvent = this.eventService.update(event, id)
+                .orElseThrow(() -> new EventNotFoundException(id));
+        EntityModel<?> entityModel = eventModelAssembler.toModel(updatedEvent);
+
+        return ResponseEntity
+                .ok()
+                .location(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(entityModel);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteEvent(@PathVariable Long id) {
+    public ResponseEntity<?> deleteEvent(@PathVariable Long id) {
         this.eventService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

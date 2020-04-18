@@ -1,5 +1,6 @@
 package com.rafaelparente.eventlogger.services;
 
+import com.rafaelparente.eventlogger.dto.EventDTO;
 import com.rafaelparente.eventlogger.models.Event;
 import com.rafaelparente.eventlogger.models.EventLevel;
 import com.rafaelparente.eventlogger.models.Log;
@@ -9,8 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,14 +20,14 @@ public class EventServiceImpl implements EventService {
     private EventRepository eventRepository;
 
     @Override
-    public List<?> findMultiple(Pageable pageable,
-                                Optional<List<EventLevel>> level,
-                                Optional<String> description,
-                                Optional<List<String>> source,
-                                Optional<List<Integer>> year,
-                                Optional<List<Integer>> month,
-                                Optional<List<Integer>> day,
-                                Optional<List<Integer>> quantity) {
+    public List<EventDTO> findMultiple(Pageable pageable,
+                                       Optional<List<EventLevel>> level,
+                                       Optional<String> description,
+                                       Optional<List<String>> source,
+                                       Optional<List<Integer>> year,
+                                       Optional<List<Integer>> month,
+                                       Optional<List<Integer>> day,
+                                       Optional<List<Integer>> quantity) {
         return this.eventRepository.findMultiple(pageable, level, description, source, year, month, day, quantity).getContent();
     }
 
@@ -39,14 +38,14 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Event save(Event event) {
-        if (event.getLog().getTime() == null) event.getLog().setTime(LocalTime.now().truncatedTo(ChronoUnit.SECONDS));
         if (event.getDate() == null) event.setDate(LocalDate.now());
         if (event.getQuantity() == null) event.setQuantity(1);
+
         return this.eventRepository.save(event);
     }
 
     @Override
-    public Event change(Event event, Long id) {
+    public Optional<Event> change(Event event, Long id) {
         return this.eventRepository.findById(id)
                 .map(repoEvent -> {
                     repoEvent.setLevel(event.getLevel());
@@ -55,17 +54,12 @@ public class EventServiceImpl implements EventService {
                     Log repoEventLog = repoEvent.getLog();
                     Log eventLog = event.getLog();
                     repoEventLog.setText(eventLog.getText());
-                    repoEventLog.setTime(eventLog.getTime());
 
                     repoEvent.setSource(event.getSource());
                     repoEvent.setDate(event.getDate());
                     repoEvent.setQuantity(event.getQuantity());
 
                     return this.eventRepository.save(repoEvent);
-                })
-                .orElseGet(() -> {
-                    event.setId(id);
-                    return this.save(event);
                 });
     }
 
@@ -85,11 +79,9 @@ public class EventServiceImpl implements EventService {
 
                     log.ifPresent(l -> {
                         Optional<String> text = Optional.ofNullable(l.getText());
-                        Optional<LocalTime> time = Optional.ofNullable(l.getTime());
 
                         Log repoEventLog = repoEvent.getLog();
                         text.ifPresent(repoEventLog::setText);
-                        time.ifPresent(repoEventLog::setTime);
                     });
 
                     source.ifPresent(repoEvent::setSource);
