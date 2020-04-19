@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
 
 @Data
@@ -39,6 +40,7 @@ public class Event {
     private LocalDateTime date;
 
     @NotNull
+    @Positive
     private Integer quantity;
 
     public void setLog(Log log) {

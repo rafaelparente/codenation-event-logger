@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
@@ -22,6 +23,7 @@ public class Log {
     private Event event;
 
     @NotNull
+    @NotBlank
     private String text;
 
 }
