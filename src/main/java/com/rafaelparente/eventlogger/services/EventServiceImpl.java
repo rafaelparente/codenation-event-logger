@@ -9,7 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,8 +28,11 @@ public class EventServiceImpl implements EventService {
                                        Optional<List<Integer>> year,
                                        Optional<List<Integer>> month,
                                        Optional<List<Integer>> day,
+                                       Optional<List<Integer>> hours,
+                                       Optional<List<Integer>> minutes,
+                                       Optional<List<Integer>> seconds,
                                        Optional<List<Integer>> quantity) {
-        return this.eventRepository.findMultiple(pageable, level, description, source, year, month, day, quantity).getContent();
+        return this.eventRepository.findMultiple(pageable, level, description, source, year, month, day, hours, minutes, seconds, quantity).getContent();
     }
 
     @Override
@@ -38,7 +42,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Event save(Event event) {
-        if (event.getDate() == null) event.setDate(LocalDate.now());
+        if (event.getDate() == null) event.setDate(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
         if (event.getQuantity() == null) event.setQuantity(1);
 
         return this.eventRepository.save(event);
@@ -71,7 +75,7 @@ public class EventServiceImpl implements EventService {
                     Optional<String> description = Optional.ofNullable(event.getDescription());
                     Optional<Log> log = Optional.ofNullable(event.getLog());
                     Optional<String> source = Optional.ofNullable(event.getSource());
-                    Optional<LocalDate> date = Optional.ofNullable(event.getDate());
+                    Optional<LocalDateTime> date = Optional.ofNullable(event.getDate());
                     Optional<Integer> quantity = Optional.ofNullable(event.getQuantity());
 
                     level.ifPresent(repoEvent::setLevel);

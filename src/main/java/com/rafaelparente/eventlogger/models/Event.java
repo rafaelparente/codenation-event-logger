@@ -9,7 +9,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -34,9 +34,9 @@ public class Event {
     @NotNull
     private String source;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @NotNull
-    private LocalDate date;
+    private LocalDateTime date;
 
     @NotNull
     private Integer quantity;

@@ -17,6 +17,9 @@ public interface EventService {
                                 Optional<List<Integer>> year,
                                 Optional<List<Integer>> month,
                                 Optional<List<Integer>> day,
+                                Optional<List<Integer>> hours,
+                                Optional<List<Integer>> minutes,
+                                Optional<List<Integer>> seconds,
                                 Optional<List<Integer>> quantity);
 
     Optional<Event> findById(Long id);

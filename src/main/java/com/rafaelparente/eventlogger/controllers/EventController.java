@@ -41,13 +41,17 @@ public class EventController {
                                                               @RequestParam Optional<List<Integer>> year,
                                                               @RequestParam Optional<List<Integer>> month,
                                                               @RequestParam Optional<List<Integer>> day,
+                                                              @RequestParam Optional<List<Integer>> hours,
+                                                              @RequestParam Optional<List<Integer>> minutes,
+                                                              @RequestParam Optional<List<Integer>> seconds,
                                                               @RequestParam Optional<List<Integer>> quantity) {
         List<EntityModel<?>> events = this.eventService.findMultiple(pageable, level,
                 description.map(s -> s.isEmpty() ? null : s.replace('~', '%')),
-                source, year, month, day, quantity)
+                source, year, month, day, hours, minutes, seconds, quantity)
                 .stream().map(eventDTOModelAssembler::toModel).collect(Collectors.toList());
 
-        return new CollectionModel<>(events); //linkTo(methodOn(EventController.class).all()).withSelfRel()
+        return new CollectionModel<>(events,
+                linkTo(EventController.class).withSelfRel());
     }
 
     @GetMapping("/{id}")
@@ -74,18 +78,14 @@ public class EventController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> changeEvent(@RequestBody Event event, @PathVariable Long id) {
-        Optional<Event> changedEvent = this.eventService.change(event, id);
-
-        if (changedEvent.isPresent()) {
-            EntityModel<?> entityModel = eventModelAssembler.toModel(changedEvent.get());
+        Event changedEvent = this.eventService.change(event, id)
+                .orElseThrow(() -> new EventNotFoundException(id));
+            EntityModel<?> entityModel = eventModelAssembler.toModel(changedEvent);
 
             return ResponseEntity
                     .ok()
                     .location(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
                     .body(entityModel);
-        }
-
-        return this.saveEvent(event);
     }
 
     @PatchMapping("/{id}")

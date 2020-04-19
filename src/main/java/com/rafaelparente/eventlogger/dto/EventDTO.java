@@ -6,7 +6,7 @@ import com.rafaelparente.eventlogger.models.EventLevel;
 import lombok.Value;
 import org.springframework.hateoas.server.core.Relation;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Value
 @Relation(collectionRelation = "events")
@@ -21,8 +21,8 @@ public class EventDTO {
 
     private String source;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate date;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime date;
 
     private Integer quantity;
 

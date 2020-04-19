@@ -23,6 +23,9 @@ public interface EventRepository extends PagingAndSortingRepository<Event, Long>
             "and (COALESCE(:year) is null or year(e.date) in :year) " +
             "and (COALESCE(:month) is null or month(e.date) in :month) " +
             "and (COALESCE(:day) is null or day(e.date) in :day) " +
+            "and (COALESCE(:hours) is null or hour(e.date) in :hours) " +
+            "and (COALESCE(:minutes) is null or minute(e.date) in :minutes) " +
+            "and (COALESCE(:seconds) is null or second(e.date) in :seconds) " +
             "and (COALESCE(:quantity) is null or e.quantity in :quantity)")
     Page<EventDTO> findMultiple(Pageable pageable,
                                 @Param("level") Optional<List<EventLevel>> level,
@@ -31,6 +34,9 @@ public interface EventRepository extends PagingAndSortingRepository<Event, Long>
                                 @Param("year") Optional<List<Integer>> year,
                                 @Param("month") Optional<List<Integer>> month,
                                 @Param("day") Optional<List<Integer>> day,
+                                @Param("hours") Optional<List<Integer>> hours,
+                                @Param("minutes") Optional<List<Integer>> minutes,
+                                @Param("seconds") Optional<List<Integer>> seconds,
                                 @Param("quantity") Optional<List<Integer>> quantity);
 
 }
