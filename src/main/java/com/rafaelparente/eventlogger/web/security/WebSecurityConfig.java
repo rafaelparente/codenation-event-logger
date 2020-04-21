@@ -7,14 +7,12 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+
+import javax.sql.DataSource;
 
 @EnableWebSecurity
 @EnableAuthorizationServer
@@ -22,19 +20,20 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    private DataSource dataSource;
 
-    @Bean
     @Override
-    public UserDetailsService userDetailsService() {
-        UserDetails user =
-                User
-                        .withUsername("suporte")
-                        .password("12345678")
-                        .roles("USER")
-                        .build();
-
-        return new InMemoryUserDetailsManager(user);
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        PasswordEncoder encoder =
+                PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        auth
+                .jdbcAuthentication()
+                .dataSource(this.dataSource)
+                .passwordEncoder(encoder)
+                .withDefaultSchema()
+                .withUser("suporte")
+                .password(encoder.encode("12345678"))
+                .roles("ADMIN");;
     }
 
     @Bean
@@ -51,16 +50,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/configuration/security",
                 "/swagger-ui.html",
                 "/webjars/**");
-    }
-
-    @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(this.userDetailsService).passwordEncoder(passwordEncoder());
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
     }
 
 }
