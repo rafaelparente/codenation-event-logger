@@ -3,7 +3,7 @@ package com.rafaelparente.eventlogger.exceptions;
 public class UserAlreadyExistsException extends RuntimeException {
 
     public UserAlreadyExistsException(String username) {
-        super("An account for the username '" + username + "' already exists.");
+        super("An account with the username '" + username + "' already exists.");
     }
 
 }
