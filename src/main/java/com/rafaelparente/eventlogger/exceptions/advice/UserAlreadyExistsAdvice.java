@@ -1,6 +1,6 @@
 package com.rafaelparente.eventlogger.exceptions.advice;
 
-import com.rafaelparente.eventlogger.exceptions.EventNotFoundException;
+import com.rafaelparente.eventlogger.exceptions.UserAlreadyExistsException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class EventNotFoundAdvice {
+public class UserAlreadyExistsAdvice {
 
     @ResponseBody
-    @ExceptionHandler(EventNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String eventNotFoundHandler(EventNotFoundException ex) {
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.OK)
+    public String userAlreadyExistsHandler(UserAlreadyExistsException ex) {
         return ex.getMessage();
     }
 
