@@ -19,7 +19,7 @@ public class UserController {
 
     @PostMapping("/register")
     @ResponseStatus(value = HttpStatus.CREATED)
-    @ApiOperation("Creates a new user")
+    @ApiOperation("Creates a new account")
     public String processRegister(@ModelAttribute("user") @Valid UserDTO userDto) {
         User createdUser = this.userService.createNewUser(userDto)
                 .orElseThrow(() -> new UserAlreadyExistsException(userDto.getUsername()));

@@ -55,32 +55,31 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/logout").authenticated()
-                .antMatchers("/v1/**").authenticated()
+                .antMatchers("/error").permitAll()
+                .antMatchers("/register*").anonymous()
                 .anyRequest()
-                .anonymous()
+                .authenticated()
                 .and()
-//                .csrf().disable()
+                .csrf().ignoringAntMatchers("/register*").and()
+//                .httpBasic()
+//                .authenticationEntryPoint(new OAuth2AuthenticationEntryPoint())
+//                .and()
                 .formLogin()
                 .loginProcessingUrl("/oauth/authorize")
                 .failureUrl("/login?error=true")
                 .defaultSuccessUrl("/swagger-ui.html")
-                .permitAll()
                 .and()
                 .logout()
                 .logoutSuccessUrl("/login")
-//                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
-                .permitAll();
+                .clearAuthentication(true);
     }
 
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
-                .antMatchers("/",
-                        "/register",
-                        "/h2/**")
+                .antMatchers("/")
                 .antMatchers("/v2/api-docs",
                         "/configuration/ui",
                         "/swagger-resources/**",
