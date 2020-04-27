@@ -7,10 +7,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
@@ -22,8 +20,7 @@ public class UserController {
     @PostMapping("/register")
     @ResponseStatus(value = HttpStatus.CREATED)
     @ApiOperation("Creates a new user")
-    public String processRegister(@ModelAttribute("user") @Valid UserDTO userDto,
-                                        HttpServletRequest request, Errors errors) {
+    public String processRegister(@ModelAttribute("user") @Valid UserDTO userDto) {
         User createdUser = this.userService.createNewUser(userDto)
                 .orElseThrow(() -> new UserAlreadyExistsException(userDto.getUsername()));
 
