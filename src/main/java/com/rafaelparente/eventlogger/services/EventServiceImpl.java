@@ -1,13 +1,16 @@
 package com.rafaelparente.eventlogger.services;
 
 import com.rafaelparente.eventlogger.dto.EventDTO;
+import com.rafaelparente.eventlogger.facades.IAuthenticationFacade;
 import com.rafaelparente.eventlogger.models.Event;
 import com.rafaelparente.eventlogger.models.EventLevel;
 import com.rafaelparente.eventlogger.models.Log;
 import com.rafaelparente.eventlogger.repositories.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -19,6 +22,20 @@ public class EventServiceImpl implements EventService {
 
     @Autowired
     private EventRepository eventRepository;
+
+    @Autowired
+    private IAuthenticationFacade authenticationFacade;
+
+    private Optional<String> getOptionalUsername() {
+        Optional<String> username = Optional.empty();
+        Authentication authentication = authenticationFacade.getAuthentication();
+        boolean isNotAdmin = authentication.getAuthorities().stream()
+                .noneMatch(r -> r.getAuthority().equals("ROLE_ADMIN"));
+        if (isNotAdmin) {
+            username = Optional.of(authentication.getName());
+        }
+        return username;
+    }
 
     @Override
     public List<EventDTO> findMultiple(Pageable pageable,
@@ -32,25 +49,28 @@ public class EventServiceImpl implements EventService {
                                        Optional<List<Integer>> minutes,
                                        Optional<List<Integer>> seconds,
                                        Optional<List<Integer>> quantity) {
-        return this.eventRepository.findMultiple(pageable, level, description, source, year, month, day, hours, minutes, seconds, quantity).getContent();
+        return this.eventRepository.findMultiple(pageable, getOptionalUsername(), level, description, source,
+                year, month, day, hours, minutes, seconds, quantity).getContent();
     }
 
     @Override
     public Optional<Event> findById(Long id) {
-        return this.eventRepository.findById(id);
+        return this.eventRepository.findByIdAndOptionalUsername(id, getOptionalUsername());
     }
 
     @Override
     public Event save(Event event) {
+        event.setUsername(authenticationFacade.getAuthentication().getName());
         if (event.getDate() == null) event.setDate(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
         if (event.getQuantity() == null) event.setQuantity(1);
 
         return this.eventRepository.save(event);
     }
 
+    @Transactional
     @Override
     public Optional<Event> change(Event event, Long id) {
-        return this.eventRepository.findById(id)
+        return this.eventRepository.findByIdAndOptionalUsername(id, getOptionalUsername())
                 .map(repoEvent -> {
                     repoEvent.setLevel(event.getLevel());
                     repoEvent.setDescription(event.getDescription());
@@ -67,9 +87,10 @@ public class EventServiceImpl implements EventService {
                 });
     }
 
+    @Transactional
     @Override
     public Optional<Event> update(Event event, Long id) {
-        return this.eventRepository.findById(id)
+        return this.eventRepository.findByIdAndOptionalUsername(id, getOptionalUsername())
                 .map(repoEvent -> {
                     Optional<EventLevel> level = Optional.ofNullable(event.getLevel());
                     Optional<String> description = Optional.ofNullable(event.getDescription());
@@ -96,9 +117,15 @@ public class EventServiceImpl implements EventService {
                 });
     }
 
+    @Transactional
     @Override
-    public void delete(Long id) {
-        this.eventRepository.deleteById(id);
+    public boolean delete(Long id) {
+        return this.eventRepository.findByIdAndOptionalUsername(id, getOptionalUsername())
+                .map(username -> {
+                    this.eventRepository.deleteById(id);
+                    return true;
+                })
+                .orElse(false);
     }
 
 }

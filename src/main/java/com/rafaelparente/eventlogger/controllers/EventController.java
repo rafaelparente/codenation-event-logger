@@ -88,7 +88,9 @@ public class EventController {
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @ApiOperation("Deletes an event")
     public ResponseEntity<?> deleteEvent(@PathVariable Long id) {
-        this.eventService.delete(id);
+        if (!this.eventService.delete(id)) {
+            throw new EventNotFoundException(id);
+        }
         return ResponseEntity.noContent().build();
     }
 

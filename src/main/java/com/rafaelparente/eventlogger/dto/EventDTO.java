@@ -1,7 +1,6 @@
 package com.rafaelparente.eventlogger.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.rafaelparente.eventlogger.models.EventLevel;
 import lombok.Value;
 
@@ -10,7 +9,6 @@ import java.time.LocalDateTime;
 @Value
 public class EventDTO {
 
-    @JsonIgnore
     private Long id;
 
     private EventLevel level;

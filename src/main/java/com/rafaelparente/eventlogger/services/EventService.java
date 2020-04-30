@@ -30,6 +30,6 @@ public interface EventService {
 
     Optional<Event> update(Event event, Long id);
 
-    void delete(Long id);
+    boolean delete(Long id);
 
 }

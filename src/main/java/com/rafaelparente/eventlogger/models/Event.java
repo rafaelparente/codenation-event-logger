@@ -17,9 +17,12 @@ import java.time.LocalDateTime;
 @Entity
 public class Event {
 
+    @NotNull
+    @JsonIgnore
+    private String username;
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @JsonIgnore
     private Long id;
 
     @NotNull
