@@ -47,4 +47,6 @@ public interface EventRepository extends PagingAndSortingRepository<Event, Long>
     Optional<Event> findByIdAndOptionalUsername(@Param("id") Long id,
                                                 @Param("username") Optional<String> username);
 
+    void deleteAllByUsername(String username);
+
 }

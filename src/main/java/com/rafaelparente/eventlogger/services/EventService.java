@@ -32,4 +32,6 @@ public interface EventService {
 
     boolean delete(Long id);
 
+    void deleteAll(String username);
+
 }

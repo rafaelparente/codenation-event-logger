@@ -9,4 +9,6 @@ public interface UserService {
 
     Optional<User> createNewUser(UserDTO userDTO);
 
+    void delete();
+
 }

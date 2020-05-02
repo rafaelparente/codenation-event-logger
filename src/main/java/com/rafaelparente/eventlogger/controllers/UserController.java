@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
+@RequestMapping("/account")
 public class UserController {
 
     @Autowired
@@ -25,6 +26,15 @@ public class UserController {
                 .orElseThrow(() -> new UserAlreadyExistsException(userDto.getUsername()));
 
         return "Account successfully created! Your account is now ready to use.";
+    }
+
+    @DeleteMapping
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    @ApiOperation("Deletes an account")
+    public String processDelete() {
+        this.userService.delete();
+
+        return "Account and its events successfully deleted!";
     }
 
 }

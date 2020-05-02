@@ -49,11 +49,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/error").permitAll()
-                .antMatchers("/register*").anonymous()
+                .antMatchers("/account/register*").anonymous()
                 .anyRequest()
                 .authenticated()
                 .and()
-                .csrf().ignoringAntMatchers("/register*").and()
+                .csrf().ignoringAntMatchers("/account/register*").and()
                 .formLogin()
                 .loginProcessingUrl("/oauth/authorize")
                 .failureUrl("/login?error=true")

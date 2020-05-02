@@ -1,5 +1,6 @@
 package com.rafaelparente.eventlogger.swagger;
 
+import com.google.common.base.Predicates;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -73,7 +74,8 @@ public class SwaggerConfig {
         return Arrays.asList(SecurityContext.builder()
                 .securityReferences(
                         Arrays.asList(new SecurityReference("spring_oauth", scopes())))
-                .forPaths(PathSelectors.ant("/v1/**"))
+                .forPaths(Predicates.or(PathSelectors.ant("/v1/**"),
+                        PathSelectors.ant("/account/delete*")))
                 .build());
     }
 

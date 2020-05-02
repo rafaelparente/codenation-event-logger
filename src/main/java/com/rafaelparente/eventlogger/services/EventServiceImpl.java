@@ -128,4 +128,9 @@ public class EventServiceImpl implements EventService {
                 .orElse(false);
     }
 
+    @Override
+    public void deleteAll(String username) {
+        this.eventRepository.deleteAllByUsername(username);
+    }
+
 }
