@@ -28,7 +28,7 @@ public class UserController {
         return "Account successfully created! Your account is now ready to use.";
     }
 
-    @DeleteMapping
+    @DeleteMapping("/delete")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @ApiOperation("Deletes an account")
     public String processDelete() {
