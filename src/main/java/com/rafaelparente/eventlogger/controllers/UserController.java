@@ -6,10 +6,12 @@ import com.rafaelparente.eventlogger.services.UserService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/account")
@@ -17,6 +19,12 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @GetMapping("/me")
+    @ApiOperation("Gets user info")
+    public ResponseEntity<?> getUserInfo(Principal principal) {
+        return ResponseEntity.ok(principal);
+    }
 
     @PostMapping("/register")
     @ResponseStatus(value = HttpStatus.CREATED)

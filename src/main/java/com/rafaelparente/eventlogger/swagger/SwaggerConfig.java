@@ -75,7 +75,8 @@ public class SwaggerConfig {
                 .securityReferences(
                         Arrays.asList(new SecurityReference("spring_oauth", scopes())))
                 .forPaths(Predicates.or(PathSelectors.ant("/v1/**"),
-                        PathSelectors.ant("/account/delete*")))
+                        PathSelectors.ant("/account/delete*"),
+                        PathSelectors.ant("/account/me*")))
                 .build());
     }
 
