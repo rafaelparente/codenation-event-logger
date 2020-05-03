@@ -37,8 +37,9 @@ CREATE TABLE IF NOT EXISTS oauth_refresh_token (
 );
 
 CREATE TABLE IF NOT EXISTS oauth_code (
-  code VARCHAR(256), authentication BLOB
+  code VARCHAR(256),
+  authentication BLOB
 );
 
-INSERT INTO oauth_client_details (client_id, client_secret, scope, authorized_grant_types, authorities, access_token_validity)
-VALUES ('publicid', '{bcrypt}$2a$10$Q9PUBetA6UYXKRGNJKmAWeVsO.oodBUZJ7WRVnGdsesS8MhFy3Blm', 'password', 'password,refresh_token,client_credentials', 'ROLE_CLIENT', 300);
+INSERT INTO oauth_client_details (client_id, client_secret, scope, authorized_grant_types)
+VALUES ('codenation', '{bcrypt}$2a$10$B.TohWbVvETtWs.OUSzPO.WP6ajlKxxN4DlcX3lQlXiZ3t3U61WGW', 'password', 'password,refresh_token');

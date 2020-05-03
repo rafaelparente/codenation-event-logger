@@ -41,7 +41,6 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         http
                 .requestMatcher(new BearerRequestMatcher())
                 .authorizeRequests()
-                .antMatchers("/error").permitAll()
                 .antMatchers("/login*", "/logout*", "/account/register*").denyAll()
                 .anyRequest().authenticated();
     }

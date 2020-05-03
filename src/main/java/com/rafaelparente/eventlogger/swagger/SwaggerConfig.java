@@ -31,8 +31,8 @@ public class SwaggerConfig {
 
     @Bean
     public SecurityConfiguration security() {
-        String clientId = "publicid";
-        String clientSecret = "publicsecret";
+        String clientId = "codenation";
+        String clientSecret = "codenation123";
 
         String finalClientId = clientId;
         String finalClientSecret = clientSecret;
