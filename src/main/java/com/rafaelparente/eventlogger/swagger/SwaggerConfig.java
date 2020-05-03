@@ -1,9 +1,11 @@
 package com.rafaelparente.eventlogger.swagger;
 
 import com.google.common.base.Predicates;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
 import springfox.documentation.builders.*;
 import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
@@ -21,14 +23,28 @@ import java.util.List;
 @EnableSwagger2
 public class SwaggerConfig {
 
-    @Value("${security.oauth2.client.client-id}")
-    private String clientId;
+    @Autowired
+    private JdbcClientDetailsService jdbcClientDetailsService;
 
-    @Value("${security.oauth2.client.client-secret}")
-    private String clientSecret;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Bean
     public SecurityConfiguration security() {
+        String clientId = "publicid";
+        String clientSecret = "publicsecret";
+
+        String finalClientId = clientId;
+        String finalClientSecret = clientSecret;
+        boolean publicClient = jdbcClientDetailsService.listClientDetails().stream()
+                .anyMatch(clientDetails ->clientDetails.getClientId().matches(finalClientId) &&
+                        passwordEncoder.matches(finalClientSecret, clientDetails.getClientSecret()));
+
+        if (!publicClient) {
+            clientId = null;
+            clientSecret = null;
+        }
+
         return SecurityConfigurationBuilder.builder()
                 .clientId(clientId)
                 .clientSecret(clientSecret)

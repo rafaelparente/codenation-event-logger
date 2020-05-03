@@ -3,6 +3,7 @@ package com.rafaelparente.eventlogger.web.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -20,27 +21,43 @@ import javax.sql.DataSource;
 @EnableAuthorizationServer
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private JdbcUserDetailsManager jdbcUserDetailsManager;
+
+    private PasswordEncoder passwordEncoder;
+
     @Autowired
     private DataSource dataSource;
 
     @Bean
     public JdbcUserDetailsManager jdbcUserDetailsManager() throws Exception {
-        JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager();
-        jdbcUserDetailsManager.setDataSource(dataSource);
+        if (jdbcUserDetailsManager == null)
+        {
+            jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);
+        }
         return jdbcUserDetailsManager;
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() throws Exception {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        if (passwordEncoder == null)
+        {
+            passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        }
+        return passwordEncoder;
+    }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth
                 .jdbcAuthentication()
-                .dataSource(this.dataSource)
-                .passwordEncoder(passwordEncoder())
+                .dataSource(dataSource)
+                .passwordEncoder(passwordEncoder)
                 .withDefaultSchema();
     }
 
