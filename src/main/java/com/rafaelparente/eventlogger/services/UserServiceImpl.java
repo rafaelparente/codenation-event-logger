@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +30,9 @@ public class UserServiceImpl implements  UserService {
     @Autowired
     private EventService eventService;
 
+    @Autowired
+    private JdbcTokenStore tokenStore;
+
     @Transactional
     @Override
     public Optional<User> createNewUser(UserDTO userDTO) {
@@ -48,6 +53,11 @@ public class UserServiceImpl implements  UserService {
         String username = authenticationFacade.getAuthentication().getName();
         this.eventService.deleteAll(username);
         this.jdbcUserDetailsManager.deleteUser(username);
+
+        for (OAuth2AccessToken oAuth2AccessToken : this.tokenStore.findTokensByUserName(username)) {
+            this.tokenStore.removeRefreshToken(oAuth2AccessToken.getRefreshToken());
+            this.tokenStore.removeAccessToken(oAuth2AccessToken);
+        }
     }
 
 }

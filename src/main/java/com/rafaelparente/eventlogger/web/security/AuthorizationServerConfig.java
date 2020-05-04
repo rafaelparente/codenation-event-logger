@@ -13,7 +13,6 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
-import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 
 import javax.sql.DataSource;
@@ -24,7 +23,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     private JdbcClientDetailsService jdbcClientDetailsService;
 
-    private TokenStore tokenStore;
+    private JdbcTokenStore tokenStore;
 
     private DefaultTokenServices tokenServices;
 
@@ -48,7 +47,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     }
 
     @Bean
-    public TokenStore tokenStore() {
+    public JdbcTokenStore tokenStore() {
         if (tokenStore == null) {
             tokenStore = new JdbcTokenStore(dataSource);
         }
