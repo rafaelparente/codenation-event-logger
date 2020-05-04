@@ -1,6 +1,7 @@
 package com.rafaelparente.eventlogger.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -24,6 +25,7 @@ public class Log {
 
     @NotNull
     @NotBlank
+    @ApiModelProperty(required = true)
     private String text;
 
 }

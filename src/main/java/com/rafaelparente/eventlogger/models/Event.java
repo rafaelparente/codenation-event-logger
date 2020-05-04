@@ -2,6 +2,7 @@ package com.rafaelparente.eventlogger.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,27 +24,34 @@ public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @ApiModelProperty(hidden = true)
     private Long id;
 
     @NotNull
+    @ApiModelProperty(required = true)
     private EventLevel level;
 
     @NotNull
+    @ApiModelProperty(required = true)
     private String description;
 
     @OneToOne(mappedBy = "event", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @NotNull
+    @ApiModelProperty(required = true)
     @Setter(AccessLevel.NONE) private Log log;
 
     @NotNull
+    @ApiModelProperty(required = true)
     private String source;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @NotNull
+    @ApiModelProperty(example = "2020-05-03 20:51:55")
     private LocalDateTime date;
 
     @NotNull
     @Positive
+    @ApiModelProperty(allowableValues = "range[1, infinity]", example = "1")
     private Integer quantity;
 
     public void setLog(Log log) {
