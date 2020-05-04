@@ -9,6 +9,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
@@ -24,6 +26,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private JdbcUserDetailsManager jdbcUserDetailsManager;
 
     private PasswordEncoder passwordEncoder;
+
+    private SessionRegistry sessionRegistry;
 
     @Autowired
     private DataSource dataSource;
@@ -44,6 +48,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
         }
         return passwordEncoder;
+    }
+
+    @Bean
+    SessionRegistry sessionRegistry() {
+        if (sessionRegistry == null)
+        {
+            sessionRegistry = new SessionRegistryImpl();
+        }
+        return sessionRegistry;
     }
 
     @Bean
@@ -79,7 +92,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessUrl("/login")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
-                .clearAuthentication(true);
+                .clearAuthentication(true)
+                .and()
+                .sessionManagement()
+                .maximumSessions(-1)
+                .sessionRegistry(sessionRegistry)
+                .expiredUrl("/login");
     }
 
     @Override

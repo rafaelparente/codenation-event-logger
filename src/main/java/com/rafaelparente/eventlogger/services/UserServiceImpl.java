@@ -4,6 +4,8 @@ import com.rafaelparente.eventlogger.dto.UserDTO;
 import com.rafaelparente.eventlogger.facades.IAuthenticationFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.session.SessionInformation;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -33,6 +35,9 @@ public class UserServiceImpl implements  UserService {
     @Autowired
     private JdbcTokenStore tokenStore;
 
+    @Autowired
+    private SessionRegistry sessionRegistry;
+
     @Transactional
     @Override
     public Optional<User> createNewUser(UserDTO userDTO) {
@@ -57,6 +62,10 @@ public class UserServiceImpl implements  UserService {
         for (OAuth2AccessToken oAuth2AccessToken : this.tokenStore.findTokensByUserName(username)) {
             this.tokenStore.removeRefreshToken(oAuth2AccessToken.getRefreshToken());
             this.tokenStore.removeAccessToken(oAuth2AccessToken);
+        }
+
+        for (SessionInformation session : sessionRegistry.getAllSessions(authenticationFacade.getAuthentication().getPrincipal(), false)) {
+            session.expireNow();
         }
     }
 
