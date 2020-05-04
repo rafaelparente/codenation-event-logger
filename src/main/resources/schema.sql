@@ -43,3 +43,20 @@ CREATE TABLE IF NOT EXISTS oauth_code (
 
 INSERT INTO oauth_client_details (client_id, client_secret, scope, authorized_grant_types)
 VALUES ('codenation', '{bcrypt}$2a$10$B.TohWbVvETtWs.OUSzPO.WP6ajlKxxN4DlcX3lQlXiZ3t3U61WGW', 'password', 'password,refresh_token');
+
+CREATE TABLE IF NOT EXISTS users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(256) NOT NULL,
+  password VARCHAR(256) NOT NULL,
+  enabled TINYINT(1),
+  UNIQUE KEY unique_username(username)
+);
+
+CREATE TABLE IF NOT EXISTS authorities (
+  username VARCHAR(256) NOT NULL,
+  authority VARCHAR(256) NOT NULL,
+  PRIMARY KEY(username, authority)
+);
+
+INSERT INTO users (username, password, enabled) VALUES ('suporte', '{bcrypt}$2a$10$71sLMJ6BmdtzMMGgRhPbGOWgppAiL9LH9LGF7KliCfZ1xp3poT95q', 1);
+INSERT INTO authorities (username, authority) VALUES ('suporte', 'ROLE_ADMIN');
