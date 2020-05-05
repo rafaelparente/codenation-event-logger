@@ -21,6 +21,7 @@ Logout / logout
   
 # API Endpoints
 Lists multiple events, which can be filtered, but hiding logs (GET) = /v1/events  
+(Filter available: event's properties and also page, size, sort, etc.)
 GET/POST/PUT/PATCH/DEL event (identified by id) = /v1/events/id  
   
 # Documentation
